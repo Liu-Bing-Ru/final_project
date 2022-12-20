@@ -1,0 +1,137 @@
+using namespace std;
+#define SDL_MAIN_INCLUDED
+#include <iostream>
+#include<Windows.h>
+#include<stdio.h>
+#include<SDL.h>
+#include <SDL_image.h>
+#undef main
+#include <cstring>
+#include <cstdlib>
+#include <time.h>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const int SCREEN_WIDTH3 = 800;
+const int SCREEN_HEIGHT3 = 600;
+
+
+ //全局窗口和渲染器
+ SDL_Window * window3 = nullptr;
+ SDL_Renderer * renderer3 = nullptr;
+
+ //加载图片
+ SDL_Texture * LoadImage(std::string file)
+ {
+	     SDL_Texture * tex3 = nullptr;
+	     tex3 = IMG_LoadTexture(renderer3, file.c_str());
+	     if (tex3 == nullptr)
+		         throw std::runtime_error("Failed to load image: " + file + IMG_GetError());
+	     return tex3;
+	 }
+
+ //将表面应用到渲染器
+ void ApplySurface(int x3, int y3, SDL_Texture * tex3, SDL_Renderer * rend3)
+ {
+	     SDL_Rect pos;
+	     pos.x = x3;
+	     pos.y = y3;
+	     SDL_QueryTexture(tex3, NULL, NULL, &pos.w, &pos.h);
+	     SDL_RenderCopy(rend3, tex3, NULL, &pos);
+	 }
+
+ int main(int argc, char** argv)
+ {
+	     //初始化SDL
+		     if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
+		     {
+		         std::cout << SDL_GetError() << std::endl;
+		         return 1;
+		     }
+	
+		     //创建窗口
+		     window3 = SDL_CreateWindow("Lesson 3",
+		         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+			         SCREEN_WIDTH3, SCREEN_HEIGHT3, SDL_WINDOW_SHOWN);
+	     if (window3 == nullptr)
+	      {
+		         std::cout << SDL_GetError() << std::endl;
+		         return 2;
+		     }
+	
+		     //创建渲染器
+		     renderer3 = SDL_CreateRenderer(window3, -1,
+			         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	     if (renderer3 == nullptr)
+		     {
+		         std::cout << SDL_GetError() << std::endl;
+		         return 3;
+		     }
+	
+		     //创建背景和前景纹理
+		     SDL_Texture * background = nullptr;
+	     try {
+		         background = LoadImage("bg1.png");
+		         //image = LoadImage("cloud.png");
+		
+	}
+	     catch (const std::runtime_error& e) {
+		         std::cout << e.what() << std::endl;
+		         return 4;
+		
+	}
+	
+		     //清空渲染器
+		     SDL_RenderClear(renderer3);
+	
+		     //在渲染器内平铺背景
+		     int bW, bH;
+	     SDL_QueryTexture(background, NULL, NULL, &bW, &bH);
+	     for (int y = 0; y <= SCREEN_HEIGHT3; y += bH)
+		         for (int x = 0; x <= SCREEN_WIDTH3; x += bW)
+		             ApplySurface(x, y, background, renderer3);
+	
+		     //呈现渲染器
+		     SDL_RenderPresent(renderer3);
+			 
+	     SDL_Delay(10000);
+	
+		     //释放资源
+		     SDL_DestroyTexture(background);
+	    
+	     SDL_DestroyRenderer(renderer3);
+	     SDL_DestroyWindow(window3);
+	
+		     SDL_Quit();
+			 cout << "endddddd";
+	
+		     return 0;
+	 }
